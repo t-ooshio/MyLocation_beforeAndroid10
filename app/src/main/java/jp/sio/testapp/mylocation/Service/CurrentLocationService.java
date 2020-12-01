@@ -179,10 +179,10 @@ public class CurrentLocationService extends Service implements LocationListener 
     public void judgeSuc_Fail(final Location locaiton){
         L.d("judgeSuc_Fail");
 
-        if(locaiton.hasAccuracy()){
-            locationSuccess(locaiton);
-        }else{
+        if(locaiton == null){
             locationFailed();
+        }else{
+            locationSuccess(locaiton);
         }
     }
     /**

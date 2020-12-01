@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MyLocation.iml" filepath="$PROJECT_DIR$/MyLocation.iml" group="MyLocation" />
-      <module fileurl="file://$PROJECT_DIR$/app/MyLocation-app.iml" filepath="$PROJECT_DIR$/app/MyLocation-app.iml" group="MyLocation/app" />
-      <module fileurl="file://$PROJECT_DIR$/android-MyLocation.iml" filepath="$PROJECT_DIR$/android-MyLocation.iml" group="MyLocation" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MyLocation.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MyLocation.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android.MyLocation.iml" filepath="$PROJECT_DIR$/.idea/modules/android.MyLocation.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="MyLocation/app" />
     </modules>
   </component>
