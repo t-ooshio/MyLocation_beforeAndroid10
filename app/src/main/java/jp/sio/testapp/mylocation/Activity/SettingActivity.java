@@ -23,11 +23,13 @@ public class SettingActivity extends AppCompatActivity {
     private EditText editTextCount;
     private EditText editTextTimeout;
     private EditText editTextInterval;
+    private EditText editTextminTime;
     private EditText editTextSuplEndWaitTime;
     private EditText editTextDelAssistDataTime;
     private RadioButton radioButtonUeb;
     private RadioButton radioButtonUea;
     private RadioButton radioButtonCurrentLocation;
+    private RadioButton radioButtonTracking;
     private RadioButton radioButtonNetwork;
     private RadioButton radioButtonFlp;
     private RadioButton radioButtoniArea;
@@ -45,11 +47,13 @@ public class SettingActivity extends AppCompatActivity {
         editTextCount = (EditText)findViewById(R.id.editTextCount);
         editTextTimeout = (EditText)findViewById(R.id.editTextTimeout);
         editTextInterval = (EditText)findViewById(R.id.editTextInterval);
+        editTextminTime = (EditText)findViewById(R.id.editTextminTime);
         editTextSuplEndWaitTime = (EditText)findViewById(R.id.editTextSuplEndWaitTime);
         editTextDelAssistDataTime = (EditText)findViewById(R.id.editTextDelAssistDataTime);
         radioButtonUeb = (RadioButton)findViewById(R.id.rbUeb);
         radioButtonUea = (RadioButton)findViewById(R.id.rbUea);
         radioButtonCurrentLocation = (RadioButton)findViewById(R.id.rbCurrentLocation);
+        radioButtonTracking = (RadioButton)findViewById(R.id.rbTracking);
         radioButtonNetwork = (RadioButton)findViewById(R.id.rbNw);
         radioButtoniArea = (RadioButton)findViewById(R.id.rbiArea);
         radioButtonFlp = (RadioButton)findViewById(R.id.rbFlp);
@@ -79,6 +83,10 @@ public class SettingActivity extends AppCompatActivity {
     public void setInterval(long interval){
         editTextInterval.setText(Long.toString(interval));
     }
+    public void setminTime(long minTime){
+        editTextminTime.setText(Long.toString(minTime));
+    }
+
     public void setSuplEndWaitTime(int suplEndWaitTime){
         editTextSuplEndWaitTime.setText(Integer.toString(suplEndWaitTime));
     }
@@ -93,6 +101,9 @@ public class SettingActivity extends AppCompatActivity {
     }
     public void enableRadioButtonCurrentLocation(){
         radioButtonCurrentLocation.setChecked(true);
+    }
+    public void enableRadioButtonTracking(){
+        radioButtonTracking.setChecked(true);
     }
     public void enableRadioButtonNetwork(){
         radioButtonNetwork.setChecked(true);
@@ -124,6 +135,12 @@ public class SettingActivity extends AppCompatActivity {
         interval = editTextInterval.getText().toString();
         return Long.parseLong(interval);
     }
+    public long getminTime(){
+        String minTime;
+        minTime = editTextminTime.getText().toString();
+        return Long.parseLong(minTime);
+    }
+
     public int getSuplEndWaitTime(){
         String suplendwaittime;
         suplendwaittime = editTextSuplEndWaitTime.getText().toString();
@@ -143,7 +160,9 @@ public class SettingActivity extends AppCompatActivity {
     public boolean isRadioButtonCurrentLocation(){
         return radioButtonCurrentLocation.isChecked();
     }
-
+    public boolean isRadioButtonTracking(){
+        return radioButtonTracking.isChecked();
+    }
     public boolean isRadioButtonNetwork(){
         return radioButtonNetwork.isChecked();
     }

@@ -32,6 +32,8 @@ public class SettingPresenter {
             locationTyep = activity.getResources().getString(R.string.locationUea);
         }else if(activity.isRadioButtonCurrentLocation()) {
             locationTyep = activity.getResources().getString(R.string.locationCurrent);
+        }else if(activity.isRadioButtonTracking()){
+            locationTyep=activity.getResources().getString(R.string.locationTracking);
         }
         else if(activity.isRadioButtonNetwork()){
             locationTyep = activity.getResources().getString(R.string.locationNw);
@@ -46,6 +48,7 @@ public class SettingPresenter {
         settingusecase.setCount(activity.getCount());
         settingusecase.setInterval(activity.getInterval());
         settingusecase.setTimeout(activity.getTimeout());
+        settingusecase.setminTime(activity.getminTime());
         settingusecase.setIsCold(activity.isColdCheck());
         settingusecase.setDelAssistDataTime(activity.getDelAssistDataTime());
         settingusecase.setSuplEndWaitTIme(activity.getSuplEndWaitTime());
@@ -62,6 +65,8 @@ public class SettingPresenter {
             activity.enableRadioButtonUea();
         }else if(locationType.equals(activity.getResources().getString(R.string.locationCurrent))){
             activity.enableRadioButtonCurrentLocation();
+        }else if(locationType.equals(activity.getResources().getString(R.string.locationTracking))){
+            activity.enableRadioButtonTracking();
         }else if(locationType.equals(activity.getResources().getString(R.string.locationNw))) {
             activity.enableRadioButtonNetwork();
         }else if(locationType.equals(activity.getResources().getString(R.string.locationFlp))) {
@@ -71,6 +76,7 @@ public class SettingPresenter {
         activity.setCount(settingusecase.getCount());
         activity.setInterval(settingusecase.getInterval());
         activity.setTimeout(settingusecase.getTimeout());
+        activity.setminTime(settingusecase.getminTime());
         if(settingusecase.getIsCold()) {
             activity.enableIsCold();
         }else {

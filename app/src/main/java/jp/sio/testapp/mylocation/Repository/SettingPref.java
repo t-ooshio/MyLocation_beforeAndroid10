@@ -21,6 +21,7 @@ public class SettingPref {
     private final int defCount = 0;
     private final long defInterval = 75;
     private final long defTimeout = 60;
+    private final long defminTime = 0;
     private final boolean defIsCold = true;
     private final int defSuplEndWaitTime = 0;
     private final int defDelAssistDataTime = 3;
@@ -52,6 +53,11 @@ public class SettingPref {
         editor.putLong(context.getString(R.string.settingInterval),interval);
         commitSetting();
     }
+    public void setminTime(long minTime){
+        editor.putLong(context.getString(R.string.settingminTime),minTime);
+        commitSetting();
+    }
+
     public void setTimeout(long timeout){
         editor.putLong(context.getString(R.string.settingTimeout),timeout);
         commitSetting();
@@ -78,6 +84,10 @@ public class SettingPref {
     public long getInterval(){
         return settingPref.getLong(context.getString(R.string.settingInterval),defInterval);
     }
+    public long getminTime(){
+        return settingPref.getLong(context.getString(R.string.settingminTime),defminTime);
+    }
+
     public long getTimeout(){
         return settingPref.getLong(context.getString(R.string.settingTimeout),defTimeout);
     }
@@ -95,6 +105,7 @@ public class SettingPref {
         setLocationType(defLocationType);
         setCount(defCount);
         setInterval(defInterval);
+        setminTime(defminTime);
         setTimeout(defTimeout);
         setIsCold(defIsCold);
         setSuplEndWaitTime(defSuplEndWaitTime);

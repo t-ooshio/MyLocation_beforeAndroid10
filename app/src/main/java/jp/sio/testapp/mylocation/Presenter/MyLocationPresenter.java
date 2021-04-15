@@ -23,6 +23,7 @@ import jp.sio.testapp.mylocation.Service.CurrentLocationService;
 import jp.sio.testapp.mylocation.Service.FlpService;
 import jp.sio.testapp.mylocation.Service.IareaService;
 import jp.sio.testapp.mylocation.Service.NetworkService;
+import jp.sio.testapp.mylocation.Service.TrackingService;
 import jp.sio.testapp.mylocation.Service.UeaService;
 import jp.sio.testapp.mylocation.Service.UebService;
 import jp.sio.testapp.mylocation.Usecase.MyLocationUsecase;
@@ -53,6 +54,7 @@ public class MyLocationPresenter {
     private UebService uebService;
     private UeaService ueaService;
     private CurrentLocationService currentLocationService;
+    private TrackingService trackingService;
     private NetworkService networkService;
     private IareaService iareaService;
     private FlpService flpService;
@@ -61,6 +63,7 @@ public class MyLocationPresenter {
     private int count;
     private long timeout;
     private long interval;
+    private long minTime;
     private boolean isCold;
     private int suplendwaittime;
     private int delassisttime;
@@ -106,6 +109,20 @@ public class MyLocationPresenter {
         public void onServiceDisconnected(ComponentName componentName) {
             activity.unbindService(runService);
             currentLocationService = null;
+
+        }
+    };
+
+    private ServiceConnection serviceConnectionTracking = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            trackingService = ((TrackingService.TrackingService_Binder)service).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            activity.unbindService(runService);
+            trackingService = null;
 
         }
     };
@@ -178,7 +195,7 @@ public class MyLocationPresenter {
         IntentFilter filter = null;
         getSetting();
         L.d(locationType + "," + count + "," + timeout
-                + "," + interval + "," + suplendwaittime + ","
+                + "," + interval + "," + minTime + "," + suplendwaittime + ","
                 + delassisttime + "," + isCold);
         //ログファイルの生成
         locationLog = new LocationLog(activity);
@@ -187,7 +204,7 @@ public class MyLocationPresenter {
         locationLog.makeLogFile(settingHeader);
         locationLog.writeLog(
                 locationType + "," + count + "," + timeout
-                        + "," + interval + "," + suplendwaittime + ","
+                        + "," + interval + "," + minTime + "," + suplendwaittime + ","
                         + delassisttime + "," + isCold);
         locationLog.writeLog(locationHeader);
 
@@ -208,6 +225,12 @@ public class MyLocationPresenter {
             setSetting(locationserviceIntent);
             runService = serviceConnectionUea;
             filter = new IntentFilter(activity.getResources().getString(R.string.locationUea));
+
+        }else if(locationType.equals(activity.getResources().getString(R.string.locationTracking))){
+            locationserviceIntent = new Intent(activity.getApplicationContext(), TrackingService.class);
+            setSetting(locationserviceIntent);
+            runService = serviceConnectionTracking;
+            filter = new IntentFilter(activity.getResources().getString(R.string.locationTracking));
 
         }else if(locationType.equals(activity.getResources().getString(R.string.locationCurrent))){
             L.d("after_CurrentLocationService");
@@ -384,6 +407,7 @@ public class MyLocationPresenter {
         locationServiceIntent.putExtra(activity.getResources().getString(R.string.settingCount),count);
         locationServiceIntent.putExtra(activity.getResources().getString(R.string.settingTimeout),timeout);
         locationServiceIntent.putExtra(activity.getResources().getString(R.string.settingInterval),interval);
+        locationServiceIntent.putExtra(activity.getResources().getString(R.string.settingminTime),minTime);
         locationServiceIntent.putExtra(activity.getResources().getString(R.string.settingIsCold),isCold);
         locationServiceIntent.putExtra(activity.getResources().getString(R.string.settingSuplEndWaitTime),suplendwaittime);
         locationServiceIntent.putExtra(activity.getResources().getString(R.string.settingDelAssistdataTime),delassisttime);
@@ -398,6 +422,7 @@ public class MyLocationPresenter {
         count = settingUsecase.getCount();
         timeout = settingUsecase.getTimeout();
         interval = settingUsecase.getInterval();
+        minTime = settingUsecase.getminTime();
         isCold = settingUsecase.getIsCold();
         suplendwaittime = settingUsecase.getSuplEndWaitTime();
         delassisttime = settingUsecase.getDelAssistDataTime();

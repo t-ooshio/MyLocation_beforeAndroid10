@@ -50,6 +50,7 @@ public class UebService extends Service implements LocationListener {
     private final String locationType = "UEB";
     private int settingCount;   // 0の場合は無制限に測位を続ける
     private long settingInterval;
+    private long settingminTime;
     private long settingTimeout;
     private boolean settingIsCold;
     private int settingSuplEndWaitTime;
@@ -121,6 +122,7 @@ public class UebService extends Service implements LocationListener {
         settingCount = intent.getIntExtra(getBaseContext().getString(R.string.settingCount), 0);
         settingTimeout = intent.getLongExtra(getBaseContext().getString(R.string.settingTimeout), 0) * 1000;
         settingInterval = intent.getLongExtra(getBaseContext().getString(R.string.settingInterval), 0) * 1000;
+        settingminTime = intent.getLongExtra(getBaseContext().getString(R.string.settingminTime), 0);
         settingIsCold = intent.getBooleanExtra(getBaseContext().getString(R.string.settingIsCold), true);
         settingSuplEndWaitTime = intent.getIntExtra(getResources().getString(R.string.settingSuplEndWaitTime), 0) * 1000;
         settingDelAssistdatatime = intent.getIntExtra(getResources().getString(R.string.settingDelAssistdataTime), 0) * 1000;
@@ -149,7 +151,7 @@ public class UebService extends Service implements LocationListener {
         }
         locationStartTime = System.currentTimeMillis();
         //MyLocationUsecaseで起動時にPermissionCheckを行っているのでここでは行わない
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, settingminTime, 0, this);
         L.d("requestLocationUpdates");
 
         //測位停止Timerの設定

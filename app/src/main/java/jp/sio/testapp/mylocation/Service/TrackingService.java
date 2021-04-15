@@ -1,6 +1,6 @@
 package jp.sio.testapp.mylocation.Service;
 
-import android.app.Notification;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -8,15 +8,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
-import android.app.Service;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.os.Handler;
-import android.text.TextUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -25,14 +20,17 @@ import jp.sio.testapp.mylocation.R;
 import jp.sio.testapp.mylocation.Repository.LocationLog;
 
 /**
- * UEA測位を行うためのService
- * 測位回数、測位間隔、タイムアウト、SuplEndWaitTimeあたりが渡されればいいか？
+ * Tracking測位を行うためのService
+ * minTimeの設定のみを受け付ける
+ * 停止条件は停止ボタンを押すのみ
+ * 設定の受付だけは他との兼ね合いというか面倒だからそのまま残してる
  * Created by NTT docomo on 2017/05/22.
  */
 
-public class UeaService extends Service implements LocationListener {
+public class TrackingService extends Service implements LocationListener {
 
     private LocationManager locationManager;
+    private LocationLog locationLog;
     private PowerManager powerManager;
     private PowerManager.WakeLock wakeLock;
 
@@ -45,11 +43,11 @@ public class UeaService extends Service implements LocationListener {
     private IntervalTimerTask intervalTimerTask;
 
     //設定値の格納用変数
-    private final String locationType = "UEA";
+    private final String locationType = "Tracking";
     private int settingCount;   // 0の場合は無制限に測位を続ける
     private long settingInterval;
-    private long settingminTime;
     private long settingTimeout;
+    private long settingminTime;
     private boolean settingIsCold;
     private int settingSuplEndWaitTime;
     private int settingDelAssistdatatime;
@@ -74,9 +72,9 @@ public class UeaService extends Service implements LocationListener {
     private long locationStartTime;
     private long locationStopTime;
 
-    public class UeaService_Binder extends Binder {
-        public UeaService getService() {
-            return UeaService.this;
+    public class TrackingService_Binder extends Binder {
+        public TrackingService getService() {
+            return TrackingService.this;
         }
     }
 
@@ -95,10 +93,16 @@ public class UeaService extends Service implements LocationListener {
         super.onStartCommand(intent, flags, startid);
         L.d("onStartCommand");
 
-        /** foregroundServiseの挙動がおかしいのでいったん停止
-         * //サービスがKillされるのを防止する処理
-         //サービスがKillされにくくするために、Foregroundで実行する
-         Notification notification = new Notification();
+        //サービスがKillされるのを防止する処理
+        //サービスがKillされにくくするために、Foregroundで実行する
+
+        /** foregroundServiseの挙動がおかしいのでいったん削除
+         Notification notification = new Notification.Builder(getApplicationContext(), "uebService")
+         .setContentTitle("uebService")
+         .setSmallIcon(R.drawable.icon)
+         .setContentText("service start")
+         .build();
+
          startForeground(1, notification);
          **/
 
@@ -106,7 +110,7 @@ public class UeaService extends Service implements LocationListener {
         //画面が消灯しないようにPowerManagerを使用
         powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         //PowerManagerの画面つけっぱなし設定SCREEN_BRIGHT_WAKE_LOCK、非推奨の設定値だが試験アプリ的にはあったほうがいいので使用
-        wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getString(R.string.locationUea));
+        wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getString(R.string.locationUeb));
         wakeLock.acquire();
 
         //設定値の取得
@@ -114,7 +118,7 @@ public class UeaService extends Service implements LocationListener {
         settingCount = intent.getIntExtra(getBaseContext().getString(R.string.settingCount), 0);
         settingTimeout = intent.getLongExtra(getBaseContext().getString(R.string.settingTimeout), 0) * 1000;
         settingInterval = intent.getLongExtra(getBaseContext().getString(R.string.settingInterval), 0) * 1000;
-        settingminTime = intent.getLongExtra(getBaseContext().getString(R.string.settingminTime), 0);
+        settingminTime = intent.getLongExtra(getBaseContext().getString(R.string.settingminTime),0);
         settingIsCold = intent.getBooleanExtra(getBaseContext().getString(R.string.settingIsCold), true);
         settingSuplEndWaitTime = intent.getIntExtra(getResources().getString(R.string.settingSuplEndWaitTime), 0) * 1000;
         settingDelAssistdatatime = intent.getIntExtra(getResources().getString(R.string.settingDelAssistdataTime), 0) * 1000;
@@ -137,19 +141,24 @@ public class UeaService extends Service implements LocationListener {
         L.d("locationStart");
 
         locationChangeCount = 0;
+
         if (settingIsCold) {
             coldLocation(locationManager);
         }
         locationStartTime = System.currentTimeMillis();
         //MyLocationUsecaseで起動時にPermissionCheckを行っているのでここでは行わない
-        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,this,null);
-        L.d("requestSingleUpdate");
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, settingminTime, 0, this);
+        L.d("requestLocationUpdates");
 
         //測位停止Timerの設定
+        //Trackingじゃ停止タイマー今はつけない
+        //あとで時間で止める処理入れたい時ようにコメントアウトで残す
+        /**
         L.d("SetStopTimer");
         stopTimerTask = new StopTimerTask();
         stopTimer = new Timer(true);
         stopTimer.schedule(stopTimerTask, settingTimeout);
+         */
     }
 
     /**
@@ -160,14 +169,18 @@ public class UeaService extends Service implements LocationListener {
         //測位終了の時間を取得
         locationStopTime = System.currentTimeMillis();
         //測位タイムアウトのタイマーをクリア
+        /**
         if (stopTimer != null) {
             stopTimer.cancel();
             stopTimer = null;
         }
+         */
         runningCount++;
         successCount++;
         isLocationFix = true;
         ttff = (double) (locationStopTime - locationStartTime) / 1000;
+        locationStartTime = System.currentTimeMillis();
+
         //測位結果の通知
         resultHandler.post(new Runnable() {
             @Override
@@ -178,18 +191,10 @@ public class UeaService extends Service implements LocationListener {
         });
         L.d(location.getLatitude() + " " + location.getLongitude());
 
-        try {
-            Thread.sleep(settingSuplEndWaitTime);
-        } catch (InterruptedException e) {
-            L.d(e.getMessage());
-            e.printStackTrace();
-        }
-        if (locationManager != null) {
-            locationManager.removeUpdates(this);
-        }
-
+        /**
         //測位回数が設定値に到達しているかチェック
-        if (runningCount == settingCount && settingCount != 0) {
+        L.d("settingCount=" + settingCount + " runningCount=" + runningCount);
+        if ((runningCount == settingCount) && settingCount != 0) {
             serviceStop();
         } else {
             //回数満了してなければ測位間隔Timerを設定して次の測位の準備
@@ -203,6 +208,7 @@ public class UeaService extends Service implements LocationListener {
             L.d("Interval:" + settingInterval);
             intervalTimer.schedule(intervalTimerTask, settingInterval);
         }
+         */
     }
 
     /**
@@ -228,11 +234,12 @@ public class UeaService extends Service implements LocationListener {
             public void run() {
                 L.d("resultHandler.post");
                 Location location = new Location(LocationManager.GPS_PROVIDER);
-                sendLocationBroadCast(isLocationFix,successCount, failCount,  location, locationStartTime, locationStopTime);
+                sendLocationBroadCast(isLocationFix, successCount, failCount, location, locationStartTime, locationStopTime);
             }
         });
         //測位回数が設定値に到達しているかチェック
-        if (settingCount == runningCount && settingCount != 0) {
+        L.d("settingCount=" + settingCount + " runningCount=" + runningCount);
+        if ((settingCount == runningCount) && settingCount != 0) {
             serviceStop();
         } else {
             L.d("FailedのIntervalTimer");
@@ -282,12 +289,9 @@ public class UeaService extends Service implements LocationListener {
 
     @Override
     public void onLocationChanged(final Location location) {
-        locationChangeCount++;
-        L.d("onLocationChanged," + "locationChangeCount:" + locationChangeCount);
-        if(locationChangeCount == 1){
-            locationSuccess(location);
-        }
+        locationSuccess(location);
     }
+
 
     @Override
     public void onDestroy() {
@@ -295,6 +299,7 @@ public class UeaService extends Service implements LocationListener {
         serviceStop();
         super.onDestroy();
     }
+
 
     /**
      * アシストデータの削除
@@ -361,7 +366,7 @@ public class UeaService extends Service implements LocationListener {
      */
     protected void sendLocationBroadCast(Boolean fix,int successCount, int failCount, Location location, long locationStartTime, long locationStopTime) {
         L.d("sendLocation");
-        Intent broadcastIntent = new Intent(getResources().getString(R.string.locationUea));
+        Intent broadcastIntent = new Intent(getResources().getString(R.string.locationTracking));
         broadcastIntent.putExtra(getResources().getString(R.string.category), getResources().getString(R.string.categoryLocation));
         broadcastIntent.putExtra(getResources().getString(R.string.TagisFix), fix);
         broadcastIntent.putExtra(getResources().getString(R.string.TagLocation), location);
@@ -381,7 +386,7 @@ public class UeaService extends Service implements LocationListener {
      * @param category
      */
     protected void sendColdBroadCast(String category) {
-        Intent broadcastIntent = new Intent(getResources().getString(R.string.locationUea));
+        Intent broadcastIntent = new Intent(getResources().getString(R.string.locationUeb));
 
         if (category.equals(getResources().getString(R.string.categoryColdStart))) {
             L.d("ColdStart");
@@ -397,7 +402,8 @@ public class UeaService extends Service implements LocationListener {
      * Serviceを破棄することを通知するBroadcast
      */
     protected void sendServiceEndBroadCast() {
-        Intent broadcastIntent = new Intent(getResources().getString(R.string.locationUea));
+        L.d("sendServiceEndBroadcast");
+        Intent broadcastIntent = new Intent(getResources().getString(R.string.locationUeb));
         broadcastIntent.putExtra(getResources().getString(R.string.category), getResources().getString(R.string.categoryServiceEnd));
         sendBroadcast(broadcastIntent);
     }
@@ -424,7 +430,7 @@ public class UeaService extends Service implements LocationListener {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return new UeaService_Binder();
+        return new TrackingService_Binder();
     }
 
     @Override

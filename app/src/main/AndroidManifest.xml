@@ -29,6 +29,7 @@
         <service android:name=".Service.UebService"></service>
         <service android:name=".Service.UeaService"></service>
         <service android:name=".Service.CurrentLocationService"></service>
+        <service android:name=".Service.TrackingService"></service>
         <service android:name=".Service.NetworkService"></service>
         <service android:name=".Service.IareaService"></service>
         <service android:name=".Service.FlpService"></service>

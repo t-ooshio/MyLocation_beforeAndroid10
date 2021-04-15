@@ -12,18 +12,19 @@
     <string name="settingActIsCold">アシストデータ削除</string>
 
     <!---LocationLog用-->
-    <string name="settingHeader">測位方式,測位回数(0:無限),測位タイムアウト,測位間隔,SUPLEND待ち時間,アシストデータ削除時間,アシストデータ削除有無</string>
+    <string name="settingHeader">測位方式,測位回数(0:無限),測位タイムアウト,測位間隔,minTime,SUPLEND待ち時間,アシストデータ削除時間,アシストデータ削除有無</string>
     <string name="locationHeader">測位開始時間,測位終了時間,測位成否,緯度,経度,TTFF,Accuracy,LocationTime(epoch),LocationTime(UTC)</string>
 
     <!---Setting用の項目 -->
     <string name="settingPrefName">MyLocationSetting</string>
     <string name="settingLocationType">LOCATIONTYPE</string>
-    <string name="settingCount">COUNT</string>
-    <string name="settingTimeout">TIMEOUT</string>
-    <string name="settingInterval">INTERVAL</string>
+    <string name="settingCount">COUNT(0:無制限)</string>
+    <string name="settingTimeout">TIMEOUT(秒)</string>
+    <string name="settingInterval">INTERVAL(秒)</string>
+    <string name="settingminTime">minTime(ms)</string>
     <string name="settingIsCold">isCold</string>
-    <string name="settingSuplEndWaitTime">SUPLENDWAITTIME</string>
-    <string name="settingDelAssistdataTime">DelAssistdataTime</string>
+    <string name="settingSuplEndWaitTime">SUPLENDWAITTIME(秒)</string>
+    <string name="settingDelAssistdataTime">DelAssistdataTime(秒)</string>
 
     <!---測位種別用の文字列定数 -->
     <string name="locationList">測位種別</string>

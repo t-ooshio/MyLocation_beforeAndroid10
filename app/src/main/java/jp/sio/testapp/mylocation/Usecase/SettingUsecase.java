@@ -39,6 +39,10 @@ public class SettingUsecase {
     public void setTimeout(long timeout){
         settingPref.setTimeout(timeout);
     }
+    public void setminTime(long minTime){
+        settingPref.setminTime(minTime);
+    }
+
     public void setSuplEndWaitTIme(int suplEndWaitTIme){
         settingPref.setSuplEndWaitTime(suplEndWaitTIme);
     }
@@ -66,6 +70,10 @@ public class SettingUsecase {
     public long getInterval(){
         return settingPref.getInterval();
     }
+    public long getminTime(){
+        return settingPref.getminTime();
+    }
+
     public boolean getIsCold(){
         return settingPref.getIsCold();
     }
