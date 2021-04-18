@@ -19,7 +19,6 @@ import jp.sio.testapp.mylocation.Activity.MyLocationActivity;
 import jp.sio.testapp.mylocation.Activity.SettingActivity;
 import jp.sio.testapp.mylocation.L;
 import jp.sio.testapp.mylocation.R;
-import jp.sio.testapp.mylocation.Service.CurrentLocationService;
 import jp.sio.testapp.mylocation.Service.FlpService;
 import jp.sio.testapp.mylocation.Service.IareaService;
 import jp.sio.testapp.mylocation.Service.NetworkService;
@@ -53,7 +52,6 @@ public class MyLocationPresenter {
 
     private UebService uebService;
     private UeaService ueaService;
-    private CurrentLocationService currentLocationService;
     private TrackingService trackingService;
     private NetworkService networkService;
     private IareaService iareaService;
@@ -95,20 +93,6 @@ public class MyLocationPresenter {
         public void onServiceDisconnected(ComponentName componentName) {
             activity.unbindService(runService);
             ueaService = null;
-
-        }
-    };
-
-    private ServiceConnection serviceConnectionCurrentLocation = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder service) {
-            currentLocationService = ((CurrentLocationService.CurrentLocationService_Binder)service).getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            activity.unbindService(runService);
-            currentLocationService = null;
 
         }
     };
@@ -231,14 +215,6 @@ public class MyLocationPresenter {
             setSetting(locationserviceIntent);
             runService = serviceConnectionTracking;
             filter = new IntentFilter(activity.getResources().getString(R.string.locationTracking));
-
-        }else if(locationType.equals(activity.getResources().getString(R.string.locationCurrent))){
-            L.d("after_CurrentLocationService");
-            locationserviceIntent = new Intent(activity.getApplicationContext(), CurrentLocationService.class);
-            setSetting(locationserviceIntent);
-            runService = serviceConnectionCurrentLocation;
-            filter = new IntentFilter(activity.getResources().getString(R.string.locationCurrent));
-            L.d("before_CurrentLocationService");
 
         }else if(locationType.equals(activity.getResources().getString(R.string.locationNw))){
             locationserviceIntent = new Intent(activity.getApplicationContext(), NetworkService.class);

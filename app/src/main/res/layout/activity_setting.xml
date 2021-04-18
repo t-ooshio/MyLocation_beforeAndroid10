@@ -41,11 +41,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <RadioButton
-                    android:id="@+id/rbCurrentLocation"
-                    android:text="@string/locationCurrent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <RadioButton
                     android:id="@+id/rbTracking"
                     android:text="@string/locationTracking"
                     android:layout_width="match_parent"

@@ -6,7 +6,7 @@ android {
     buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId "jp.sio.testapp.mylocation"
-        minSdkVersion 30
+        minSdkVersion 14
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"

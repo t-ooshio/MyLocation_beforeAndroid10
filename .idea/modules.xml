@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MyLocation.iml" filepath="$PROJECT_DIR$/MyLocation.iml" group="MyLocation" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MyLocation.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MyLocation.app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android.MyLocation.iml" filepath="$PROJECT_DIR$/.idea/modules/android.MyLocation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MyLocation_before_Android10.MyLocation.iml" filepath="$PROJECT_DIR$/.idea/modules/MyLocation_before_Android10.MyLocation.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="MyLocation/app" />
     </modules>
   </component>

@@ -28,7 +28,6 @@ public class SettingActivity extends AppCompatActivity {
     private EditText editTextDelAssistDataTime;
     private RadioButton radioButtonUeb;
     private RadioButton radioButtonUea;
-    private RadioButton radioButtonCurrentLocation;
     private RadioButton radioButtonTracking;
     private RadioButton radioButtonNetwork;
     private RadioButton radioButtonFlp;
@@ -52,7 +51,6 @@ public class SettingActivity extends AppCompatActivity {
         editTextDelAssistDataTime = (EditText)findViewById(R.id.editTextDelAssistDataTime);
         radioButtonUeb = (RadioButton)findViewById(R.id.rbUeb);
         radioButtonUea = (RadioButton)findViewById(R.id.rbUea);
-        radioButtonCurrentLocation = (RadioButton)findViewById(R.id.rbCurrentLocation);
         radioButtonTracking = (RadioButton)findViewById(R.id.rbTracking);
         radioButtonNetwork = (RadioButton)findViewById(R.id.rbNw);
         radioButtoniArea = (RadioButton)findViewById(R.id.rbiArea);
@@ -98,9 +96,6 @@ public class SettingActivity extends AppCompatActivity {
     }
     public void enableRadioButtonUea(){
         radioButtonUea.setChecked(true);
-    }
-    public void enableRadioButtonCurrentLocation(){
-        radioButtonCurrentLocation.setChecked(true);
     }
     public void enableRadioButtonTracking(){
         radioButtonTracking.setChecked(true);
@@ -156,9 +151,6 @@ public class SettingActivity extends AppCompatActivity {
     }
     public boolean isRadioButtonUea(){
         return radioButtonUea.isChecked();
-    }
-    public boolean isRadioButtonCurrentLocation(){
-        return radioButtonCurrentLocation.isChecked();
     }
     public boolean isRadioButtonTracking(){
         return radioButtonTracking.isChecked();

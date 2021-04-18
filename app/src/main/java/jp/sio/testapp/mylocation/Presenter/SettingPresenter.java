@@ -30,8 +30,6 @@ public class SettingPresenter {
             locationTyep = activity.getResources().getString(R.string.locationUeb);
         }else if(activity.isRadioButtonUea()) {
             locationTyep = activity.getResources().getString(R.string.locationUea);
-        }else if(activity.isRadioButtonCurrentLocation()) {
-            locationTyep = activity.getResources().getString(R.string.locationCurrent);
         }else if(activity.isRadioButtonTracking()){
             locationTyep=activity.getResources().getString(R.string.locationTracking);
         }
@@ -63,8 +61,6 @@ public class SettingPresenter {
             activity.enableRadioButtonUeb();
         }else if(locationType.equals(activity.getResources().getString(R.string.locationUea))) {
             activity.enableRadioButtonUea();
-        }else if(locationType.equals(activity.getResources().getString(R.string.locationCurrent))){
-            activity.enableRadioButtonCurrentLocation();
         }else if(locationType.equals(activity.getResources().getString(R.string.locationTracking))){
             activity.enableRadioButtonTracking();
         }else if(locationType.equals(activity.getResources().getString(R.string.locationNw))) {
